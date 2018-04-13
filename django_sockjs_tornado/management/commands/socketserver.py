@@ -9,20 +9,19 @@ from tornado import web, ioloop
 
 class Command(BaseCommand):
 
-    option_list = BaseCommand.option_list + (
-        make_option(
+    def add_arguments(self, parser):
+        parser.add_argument(
             '--port',
             action='store',
             dest='port',
             default=getattr(settings, 'SOCKJS_PORT', 9999),
             help='What port number to run the socket server on'),
-        make_option(
+        parser.add_argument(
             '--no-keep-alive',
             action='store_true',
             dest='no_keep_alive',
             default=False,
             help='Set no_keep_alive on the connection if your server needs it')
-    )
 
     def handle(self, **options):
         if len(settings.SOCKJS_CLASSES) > 1:

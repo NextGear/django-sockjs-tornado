@@ -43,16 +43,20 @@ class Command(BaseCommand):
         }
 
         extra_urls = []
-        if hasattr(settings, 'SOCKJS_PUSH_CLASS') and hasattr(settings, 'SOCKJS_PUSH_CLASS'):
-            push_module_name, push_cls_name = settings.SOCKJS_PUSH_CLASS.rsplit('.', 1)
+        if hasattr(settings, 'SOCKJS_PUSH_CLASS') and hasattr(
+                settings, 'SOCKJS_PUSH_CLASS'):
+            push_module_name, push_cls_name = \
+                settings.SOCKJS_PUSH_CLASS.rsplit('.', 1)
             push_module = import_module(push_module_name)
             push_cls = getattr(push_module, push_cls_name)
-            extra_urls.append((settings.SOCKJS_PUSH_URL, push_cls, dict(router=router)),)
+            extra_urls.append((settings.SOCKJS_PUSH_URL, push_cls,
+                               dict(router=router)),)
 
         PORT = int(options['port'])
         app = web.Application(router.urls + extra_urls, **app_settings)
         app.listen(PORT, no_keep_alive=options['no_keep_alive'])
-        print "Running sock app on port", PORT, "with channel", channel
+        print("Running sock app on port {0} with channel {1}".format(
+            PORT, channel))
         try:
             ioloop.IOLoop.instance().start()
         except KeyboardInterrupt:
